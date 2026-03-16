@@ -1,43 +1,448 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>広告ページ</title>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" crossorigin="anonymous"></script>
-  <style>
-    body {
-      font-family: sans-serif;
-      text-align: center;
-      padding: 20px;
-      background-color: #f5f5f5;
-    }
-    .ad-container {
-      margin: 30px 0;
-    }
-    .content {
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="調理師">
+<meta name="theme-color" content="#C0392B">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-apple.png">
+<title>調理師 問題集</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --acc:#C0392B;--acc-d:#922B21;--acc-l:#FADBD8;--acc-ll:#FEF9F9;
+  --bg:#FDF6F0;--surface:#fff;--border:rgba(0,0,0,0.1);
+  --text:#1a1a1a;--muted:#6b7280;--rad:14px;
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bot:env(safe-area-inset-bottom,0px);
+}
+html,body{height:100%}
+body{
+  font-family:'Noto Sans JP',sans-serif;
+  background:var(--bg);color:var(--text);
+  padding-top:var(--safe-top);
+  padding-bottom:var(--safe-bot);
+  overflow-x:hidden;
+}
+#app{width:100%;max-width:600px;margin:0 auto;padding:1.25rem 1rem 3rem;}
+.screen{display:none}
+.screen.active{display:block}
+
+/* INSTALL BANNER */
+#install-banner{
+  display:none;position:fixed;bottom:calc(1rem + var(--safe-bot));left:50%;transform:translateX(-50%);
+  width:calc(100% - 2rem);max-width:560px;
+  background:var(--surface);border:1px solid var(--border);border-radius:16px;
+  padding:14px 16px;box-shadow:0 8px 30px rgba(0,0,0,0.12);
+  z-index:100;align-items:center;gap:12px;
+}
+#install-banner.show{display:flex}
+#install-banner .ib-icon{font-size:28px;flex-shrink:0}
+#install-banner .ib-text{flex:1}
+#install-banner .ib-text strong{font-size:14px;font-weight:700;display:block}
+#install-banner .ib-text span{font-size:12px;color:var(--muted)}
+#install-banner .ib-btn{background:var(--acc);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap}
+#install-banner .ib-close{background:none;border:none;font-size:18px;color:var(--muted);cursor:pointer;padding:4px;flex-shrink:0}
+
+/* SETUP */
+.card{background:var(--surface);border-radius:20px;padding:2rem 1.5rem;box-shadow:0 2px 20px rgba(0,0,0,0.07)}
+.hero{text-align:center;margin-bottom:1.75rem}
+.hero .ico{font-size:52px;margin-bottom:10px}
+.hero h1{font-size:24px;font-weight:700;margin-bottom:6px}
+.hero p{font-size:14px;color:var(--muted);line-height:1.6}
+.lbl{font-size:13px;font-weight:700;color:var(--muted);margin-bottom:6px;display:block}
+.api-in{
+  width:100%;padding:13px 14px;border:1.5px solid var(--border);border-radius:10px;
+  font-size:14px;font-family:monospace;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s
+}
+.api-in:focus{border-color:var(--acc)}
+.hint{margin-top:8px;font-size:12px;color:var(--muted);line-height:1.6}
+.hint a{color:var(--acc);text-decoration:none}
+.note{margin-top:1rem;padding:10px 12px;background:#FFF8E6;border-radius:8px;font-size:12px;color:#7a5800;line-height:1.6}
+
+/* BUTTONS */
+.rbtn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:15px;background:var(--acc);color:#fff;
+  border:none;border-radius:var(--rad);font-size:16px;font-weight:700;
+  font-family:inherit;cursor:pointer;margin-top:1.25rem;transition:background .15s
+}
+.rbtn:hover{background:var(--acc-d)}
+.rbtn:disabled{background:#ccc;cursor:not-allowed}
+.wbtn{flex:1;padding:13px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);font-size:15px;font-weight:700;font-family:inherit;color:var(--text);cursor:pointer;transition:all .15s;min-width:110px}
+.wbtn:hover{background:var(--bg)}
+
+/* HOME */
+.home-hero{text-align:center;padding:1.5rem 0 1rem}
+.home-hero .ico{font-size:52px;margin-bottom:10px}
+.home-hero h1{font-size:26px;font-weight:700;letter-spacing:-.5px;margin-bottom:5px}
+.home-hero p{font-size:14px;color:var(--muted)}
+.sec-lbl{font-size:11px;font-weight:700;letter-spacing:1px;color:var(--acc);text-transform:uppercase;margin:1.25rem 0 9px}
+.cat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+.cat-btn{
+  background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);
+  padding:13px;cursor:pointer;text-align:left;transition:all .15s
+}
+.cat-btn:hover{border-color:var(--acc);transform:translateY(-1px);box-shadow:0 4px 12px rgba(192,57,43,0.1)}
+.cat-btn.sel{border-color:var(--acc);background:var(--acc-ll)}
+.cat-ico{font-size:22px;margin-bottom:5px;display:block}
+.cat-nm{font-size:13px;font-weight:700;display:block}
+.cat-ds{font-size:11px;color:var(--muted);margin-top:2px;display:block}
+.row{display:flex;align-items:center;gap:12px;margin-top:1.25rem;flex-wrap:wrap}
+.row label{font-size:14px;color:var(--muted)}
+.row select{padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-size:14px;font-family:inherit;cursor:pointer}
+.chg{margin-left:auto;font-size:12px;color:var(--muted);cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+.chg:hover{color:var(--acc)}
+
+/* QUIZ */
+.qcard{background:var(--surface);border-radius:20px;padding:1.5rem;box-shadow:0 2px 20px rgba(0,0,0,0.06)}
+.prog{height:5px;background:#e5e7eb;border-radius:99px;margin-bottom:1.25rem;overflow:hidden}
+.prog-f{height:100%;background:var(--acc);border-radius:99px;transition:width .4s ease}
+.qmeta{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+.qbadge{font-size:12px;font-weight:700;color:var(--acc-d);background:var(--acc-ll);padding:4px 10px;border-radius:99px;border:1px solid var(--acc-l)}
+.qnum{font-size:13px;color:var(--muted)}
+.qtxt{font-size:17px;font-weight:700;line-height:1.65;margin-bottom:1.25rem;min-height:54px}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{
+  background:var(--bg);border:1.5px solid transparent;border-radius:12px;
+  padding:13px 15px;cursor:pointer;text-align:left;font-size:15px;
+  font-family:inherit;color:var(--text);transition:all .15s;line-height:1.5;
+  display:flex;align-items:flex-start;gap:10px
+}
+.opt:hover:not(:disabled){background:var(--acc-ll);border-color:var(--acc)}
+.olbl{font-weight:700;color:var(--acc);min-width:18px;flex-shrink:0}
+.opt.ok{background:#EAF6F0;border-color:#1D9E75;color:#085041}
+.opt.ok .olbl{color:#1D9E75}
+.opt.ng{background:#FCEBEB;border-color:#E24B4A;color:#501313}
+.opt.ng .olbl{color:#E24B4A}
+.opt:disabled{cursor:default}
+.exp{
+  margin-top:1rem;padding:13px 15px;background:#FDF0EE;border-radius:10px;
+  border-left:4px solid var(--acc);font-size:14px;color:#374151;line-height:1.75;
+  display:none;animation:fi .3s ease
+}
+.exp.on{display:block}
+.exp strong{color:var(--acc-d)}
+.nxt{display:none;width:100%;padding:13px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);font-size:15px;font-weight:700;font-family:inherit;color:var(--text);cursor:pointer;margin-top:1rem;transition:all .15s}
+.nxt.on{display:block}
+.nxt:hover{background:var(--acc-ll);border-color:var(--acc);color:var(--acc-d)}
+
+/* LOADING */
+.ld{text-align:center;padding:4rem 1rem}
+.spin{width:34px;height:34px;border:3px solid #e5e7eb;border-top-color:var(--acc);border-radius:50%;animation:rot .7s linear infinite;margin:0 auto 14px}
+@keyframes rot{to{transform:rotate(360deg)}}
+.ld p{font-size:14px;color:var(--muted)}
+
+/* RESULT */
+.rcard{background:var(--surface);border-radius:20px;padding:1.75rem;box-shadow:0 2px 20px rgba(0,0,0,0.06)}
+.rtop{text-align:center;margin-bottom:1.75rem}
+.scirc{width:120px;height:120px;position:relative;margin:0 auto 1rem}
+.snum{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:26px;font-weight:700}
+.rmsg{font-size:20px;font-weight:700;margin-bottom:5px}
+.rsub{font-size:14px;color:var(--muted)}
+.rlst{margin:1.25rem 0}
+.rttl{font-size:12px;font-weight:700;letter-spacing:.5px;color:var(--muted);margin-bottom:8px;text-transform:uppercase}
+.ri{padding:11px 13px;border-radius:10px;margin-bottom:7px;font-size:14px;line-height:1.6}
+.ri.ok{background:#EAF6F0;color:#085041}
+.ri.ng{background:#FCEBEB;color:#501313}
+.rmk{font-weight:700;font-size:15px;margin-right:5px}
+.rans{font-size:12px;opacity:.75;margin-top:2px}
+.rbtns{display:flex;gap:9px;flex-wrap:wrap}
+.retry{flex:1;padding:13px;background:var(--acc);color:#fff;border:none;border-radius:var(--rad);font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;transition:background .15s;min-width:110px}
+.retry:hover{background:var(--acc-d)}
+
+/* iOS install hint */
+.ios-hint{display:none;margin-top:1rem;padding:12px 14px;background:var(--acc-ll);border-radius:10px;font-size:13px;color:var(--acc-d);line-height:1.7;border:1px solid var(--acc-l)}
+.ios-hint.show{display:block}
+
+@keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+</style>
 </head>
 <body>
-  <div class="content">
-    <h1>おすすめ情報</h1>
-    <p>以下に広告が表示されます：</p>
-    <div class="ad-container">
-      <!-- AdSense広告コード（本番ではここを置き換えてください） -->
-      <ins class="adsbygoogle"
-           style="display:block"
-           data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-           data-ad-slot="YYYYYYYYYY"
-           data-ad-format="auto"
-           data-full-width-responsive="true"></ins>
-      <script>
-           (adsbygoogle = window.adsbygoogle || []).push({});
-      </script>
+<div id="app">
+
+  <!-- SETUP -->
+  <div id="setup-screen" class="screen active">
+    <div class="card">
+      <div class="hero">
+        <div class="ico">👨‍🍳</div>
+        <h1>調理師 問題集</h1>
+        <p>AIが調理師免許試験の問題を毎回生成します。<br>最初にAnthropicのAPIキーを入力してください。</p>
+      </div>
+      <label class="lbl" for="akey">Anthropic APIキー</label>
+      <input type="password" id="akey" class="api-in" placeholder="AIzaSy..." autocomplete="off" spellcheck="false">
+      <div class="hint"><a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com/apikey</a> で無料取得できます（クレジットカード不要）</div>
+      <button class="rbtn" id="go-btn" disabled>始める →</button>
+      <div class="note">⚠️ APIキーはこのページのメモリのみに保存され、ページを閉じると消えます。</div>
+      <div class="ios-hint" id="ios-hint">
+        📱 <strong>ホーム画面に追加する方法（iOS）</strong><br>
+        Safariの共有ボタン（□↑）→「ホーム画面に追加」→「追加」をタップ
+      </div>
     </div>
   </div>
+
+  <!-- HOME -->
+  <div id="home-screen" class="screen">
+    <div class="home-hero">
+      <div class="ico">👨‍🍳</div>
+      <h1>調理師 問題集</h1>
+      <p>カテゴリを選んで問題を生成</p>
+    </div>
+    <div class="sec-lbl">カテゴリを選択</div>
+    <div class="cat-grid">
+      <button class="cat-btn sel" data-cat="食品学"><span class="cat-ico">🥩</span><span class="cat-nm">食品学</span><span class="cat-ds">食材の特性・成分</span></button>
+      <button class="cat-btn" data-cat="食品衛生学"><span class="cat-ico">🦠</span><span class="cat-nm">食品衛生学</span><span class="cat-ds">食中毒・HACCP</span></button>
+      <button class="cat-btn" data-cat="栄養学"><span class="cat-ico">🥗</span><span class="cat-nm">栄養学</span><span class="cat-ds">三大栄養素・ビタミン</span></button>
+      <button class="cat-btn" data-cat="調理理論"><span class="cat-ico">🍳</span><span class="cat-nm">調理理論</span><span class="cat-ds">加熱・切り方・下処理</span></button>
+      <button class="cat-btn" data-cat="食文化・食習慣"><span class="cat-ico">🍜</span><span class="cat-nm">食文化・食習慣</span><span class="cat-ds">和洋中・郷土料理</span></button>
+      <button class="cat-btn" data-cat="関係法規"><span class="cat-ico">📋</span><span class="cat-nm">関係法規</span><span class="cat-ds">食品衛生法・調理師法</span></button>
+    </div>
+    <div class="row">
+      <label>問題数：</label>
+      <select id="q-count">
+        <option value="3">3問</option>
+        <option value="5" selected>5問</option>
+        <option value="10">10問</option>
+      </select>
+      <span class="chg" id="chg-key">APIキーを変更</span>
+    </div>
+    <button class="rbtn" id="start-btn">✨ 問題を生成して始める</button>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="quiz-screen" class="screen">
+    <div id="ld" class="ld"><div class="spin"></div><p id="ld-msg">AIが問題を生成中...</p></div>
+    <div id="qc" class="qcard" style="display:none">
+      <div class="prog"><div class="prog-f" id="pf" style="width:0%"></div></div>
+      <div class="qmeta"><span class="qbadge" id="qbadge"></span><span class="qnum" id="qnum">1 / 5</span></div>
+      <div class="qtxt" id="qtxt"></div>
+      <div class="opts" id="opts"></div>
+      <div class="exp" id="exp"></div>
+      <button class="nxt" id="nxt">次の問題へ →</button>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="result-screen" class="screen">
+    <div class="rcard">
+      <div class="rtop">
+        <div class="scirc">
+          <svg width="120" height="120" viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="50" fill="none" stroke="#e5e7eb" stroke-width="9"/>
+            <circle cx="60" cy="60" r="50" fill="none" stroke="#C0392B" stroke-width="9"
+              stroke-linecap="round" stroke-dasharray="314"
+              id="sarc" stroke-dashoffset="314" transform="rotate(-90 60 60)"/>
+          </svg>
+          <div class="snum" id="snum">0/0</div>
+        </div>
+        <div class="rmsg" id="rmsg"></div>
+        <div class="rsub" id="rsub"></div>
+      </div>
+      <div class="rlst"><div class="rttl">振り返り</div><div id="rlst"></div></div>
+      <div class="rbtns">
+        <button class="retry" id="retry">🔄 もう一度</button>
+        <button class="wbtn" id="back">← トップへ</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Install banner (Android / desktop) -->
+<div id="install-banner">
+  <span class="ib-icon">👨‍🍳</span>
+  <div class="ib-text">
+    <strong>アプリとしてインストール</strong>
+    <span>ホーム画面に追加してオフラインでも使えます</span>
+  </div>
+  <button class="ib-btn" id="ib-install">追加する</button>
+  <button class="ib-close" id="ib-close">✕</button>
+</div>
+
+<script>
+// ── PWA ──
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(e => console.warn('SW:', e));
+}
+
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('install-banner').classList.add('show');
+});
+document.getElementById('ib-install').addEventListener('click', async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  document.getElementById('install-banner').classList.remove('show');
+});
+document.getElementById('ib-close').addEventListener('click', () => {
+  document.getElementById('install-banner').classList.remove('show');
+});
+window.addEventListener('appinstalled', () => {
+  document.getElementById('install-banner').classList.remove('show');
+});
+
+// iOS hint
+const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
+const isStandalone = window.navigator.standalone;
+if (isIos && !isStandalone) {
+  document.getElementById('ios-hint').classList.add('show');
+}
+
+// ── APP ──
+let apiKey='', selCat='食品学', questions=[], curQ=0, score=0, answered=[];
+
+const akeyEl = document.getElementById('akey');
+const goBtn  = document.getElementById('go-btn');
+
+// Persist API key in sessionStorage for page reloads
+const saved = sessionStorage.getItem('chori_key');
+if (saved) { akeyEl.value = saved; goBtn.disabled = false; }
+
+akeyEl.addEventListener('input', () => { goBtn.disabled = akeyEl.value.trim().length < 10; });
+
+goBtn.addEventListener('click', () => {
+  apiKey = akeyEl.value.trim();
+  sessionStorage.setItem('chori_key', apiKey);
+  show('home-screen');
+});
+
+document.getElementById('chg-key').addEventListener('click', () => {
+  sessionStorage.removeItem('chori_key');
+  akeyEl.value = ''; goBtn.disabled = true;
+  show('setup-screen');
+});
+
+document.querySelectorAll('.cat-btn').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.cat-btn').forEach(x => x.classList.remove('sel'));
+    b.classList.add('sel');
+    selCat = b.dataset.cat;
+  });
+});
+
+document.getElementById('start-btn').addEventListener('click', startQuiz);
+
+async function startQuiz() {
+  const n = parseInt(document.getElementById('q-count').value);
+  show('quiz-screen');
+  document.getElementById('ld').style.display = 'block';
+  document.getElementById('qc').style.display = 'none';
+
+  const msgs = ['AIが問題を生成中...', '知識ベースを参照中...', 'もう少しお待ちください...'];
+  let mi = 0;
+  const iv = setInterval(() => { document.getElementById('ld-msg').textContent = msgs[mi++ % msgs.length]; }, 2500);
+
+  try {
+    const prompt = `あなたは調理師免許試験の問題作成の専門家です。「${selCat}」について${n}問の4択問題を作成してください。\n\n以下のJSON配列のみを返してください（前後の説明・Markdownは不要）:\n[{"q":"問題文","options":["A","B","C","D"],"answer":0,"explanation":"解説"}]\n\nルール：answerは0〜3の整数、実際の調理師免許試験レベル、全て日本語、JSON配列以外出力しない`;
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+    });
+    const data = await res.json();
+    clearInterval(iv);
+    if (data.error) throw new Error(data.error.message);
+    let t = data.candidates[0].content.parts[0].text.replace(/```json\s*/g,'').replace(/```\s*/g,'').trim();
+    questions = JSON.parse(t);
+    curQ = 0; score = 0; answered = [];
+    showQ();
+  } catch(err) {
+    clearInterval(iv);
+    document.getElementById('ld-msg').textContent = '⚠️ ' + (err.message || 'エラーが発生しました');
+    setTimeout(() => show('home-screen'), 3000);
+  }
+}
+
+function showQ() {
+  document.getElementById('ld').style.display = 'none';
+  document.getElementById('qc').style.display = 'block';
+  const q = questions[curQ], tot = questions.length;
+  document.getElementById('qbadge').textContent = selCat;
+  document.getElementById('qnum').textContent = `${curQ+1} / ${tot}`;
+  document.getElementById('pf').style.width = `${(curQ/tot)*100}%`;
+  document.getElementById('qtxt').textContent = `Q${curQ+1}. ${q.q}`;
+  document.getElementById('exp').className = 'exp';
+  document.getElementById('nxt').className = 'nxt';
+  const optEl = document.getElementById('opts');
+  optEl.innerHTML = '';
+  ['A','B','C','D'].forEach((l,i) => {
+    const b = document.createElement('button');
+    b.className = 'opt';
+    b.innerHTML = `<span class="olbl">${l}</span><span>${q.options[i]}</span>`;
+    b.addEventListener('click', () => pick(i));
+    optEl.appendChild(b);
+  });
+}
+
+function pick(idx) {
+  const q = questions[curQ];
+  document.querySelectorAll('.opt').forEach(b => b.disabled = true);
+  const ok = idx === q.answer;
+  if (ok) score++;
+  document.querySelectorAll('.opt')[idx].classList.add(ok ? 'ok' : 'ng');
+  if (!ok) document.querySelectorAll('.opt')[q.answer].classList.add('ok');
+  answered.push({ q: q.q, correct: ok, ans: q.options[q.answer] });
+  const ex = document.getElementById('exp');
+  ex.innerHTML = `<strong>解説：</strong>${q.explanation}`;
+  ex.className = 'exp on';
+  const nx = document.getElementById('nxt');
+  nx.textContent = curQ >= questions.length-1 ? '結果を見る 🎯' : '次の問題へ →';
+  nx.className = 'nxt on';
+}
+
+document.getElementById('nxt').addEventListener('click', () => {
+  curQ++;
+  if (curQ >= questions.length) showRes(); else showQ();
+});
+
+function showRes() {
+  show('result-screen');
+  const tot = questions.length, pct = Math.round(score/tot*100);
+  document.getElementById('snum').textContent = `${score}/${tot}`;
+  setTimeout(() => {
+    const arc = document.getElementById('sarc');
+    arc.style.transition = 'stroke-dashoffset 1s ease';
+    arc.style.strokeDashoffset = 314 - (314 * pct / 100);
+  }, 100);
+  const ms = [
+    {m:90,t:'🎉 パーフェクト！すごい！',c:'#1D9E75'},
+    {m:70,t:'🌟 優秀！あと一息！',c:'#1D9E75'},
+    {m:60,t:'👍 合格圏内！この調子で！',c:'#1D9E75'},
+    {m:40,t:'📚 復習で伸びます！',c:'#BA7517'},
+    {m:0, t:'💪 一緒に頑張ろう！',c:'#E24B4A'},
+  ];
+  const m = ms.find(x => pct >= x.m);
+  const me = document.getElementById('rmsg');
+  me.textContent = m.t; me.style.color = m.c;
+  document.getElementById('rsub').textContent = `${tot}問中 ${score}問正解（正答率 ${pct}%）`;
+  const rl = document.getElementById('rlst');
+  rl.innerHTML = '';
+  answered.forEach((a,i) => {
+    const d = document.createElement('div');
+    d.className = `ri ${a.correct?'ok':'ng'}`;
+    const qs = a.q.length > 45 ? a.q.substring(0,45)+'…' : a.q;
+    d.innerHTML = `<div><span class="rmk">${a.correct?'○':'✕'}</span>Q${i+1}. ${qs}</div>${!a.correct?`<div class="rans">正解：${a.ans}</div>`:''}`;
+    rl.appendChild(d);
+  });
+}
+
+document.getElementById('retry').addEventListener('click', startQuiz);
+document.getElementById('back').addEventListener('click', () => show('home-screen'));
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+</script>
 </body>
 </html>
