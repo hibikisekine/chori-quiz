@@ -343,7 +343,7 @@ async function startQuiz() {
 
   try {
     const prompt = `あなたは調理師免許試験の問題作成の専門家です。「${selCat}」について${n}問の4択問題を作成してください。\n\n以下のJSON配列のみを返してください（前後の説明・Markdownは不要）:\n[{"q":"問題文","options":["A","B","C","D"],"answer":0,"explanation":"解説"}]\n\nルール：answerは0〜3の整数、実際の調理師免許試験レベル、全て日本語、JSON配列以外出力しない`;
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
